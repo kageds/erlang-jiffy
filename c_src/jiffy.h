@@ -45,6 +45,7 @@ typedef struct {
     ERL_NIF_TERM    atom_dedupe_keys;
     ERL_NIF_TERM    atom_copy_strings;
     ERL_NIF_TERM    atom_undefined;
+    ERL_NIF_TERM    atom_utf8_invalid_char_as_is;
 
     ERL_NIF_TERM    ref_object;
     ERL_NIF_TERM    ref_array;

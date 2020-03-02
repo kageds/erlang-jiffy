@@ -56,6 +56,7 @@ typedef struct {
     int             dedupe_keys;
     int             copy_strings;
     ERL_NIF_TERM    null_term;
+    int             utf8_invalid_char_as_is;
 
     unsigned char*  p;
     int             i;
@@ -86,6 +87,7 @@ dec_new(ErlNifEnv* env)
     d->dedupe_keys = 0;
     d->copy_strings = 0;
     d->null_term = d->atoms->atom_null;
+    d->utf8_invalid_char_as_is = 0;
 
     d->p = NULL;
     d->len = -1;
@@ -278,10 +280,18 @@ dec_string(Decoder* d, ERL_NIF_TERM* value)
             d->i++;
         } else {
             ulen = utf8_validate(&(d->p[d->i]), d->len - d->i);
-            if(ulen < 0) {
-                return 0;
+            if(d->utf8_invalid_char_as_is) {
+                if(ulen < 0) {
+                    d->i++;
+                } else {
+                    d->i += ulen;
+                }
+            } else {
+                if(ulen < 0) {
+                    return 0;
+                }
+                d->i += ulen;
             }
-            d->i += ulen;
         }
     }
 
@@ -693,6 +703,8 @@ decode_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
             d->copy_strings = 1;
         } else if(enif_is_identical(val, d->atoms->atom_use_nil)) {
             d->null_term = d->atoms->atom_nil;
+        } else if(enif_is_identical(val, d->atoms->atom_utf8_invalid_char_as_is)) {
+            d->utf8_invalid_char_as_is = 1;
         } else if(get_null_term(env, val, &(d->null_term))) {
             continue;
         } else {

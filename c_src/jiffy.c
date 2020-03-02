@@ -36,6 +36,7 @@ load(ErlNifEnv* env, void** priv, ERL_NIF_TERM info)
     st->atom_dedupe_keys = make_atom(env, "dedupe_keys");
     st->atom_copy_strings = make_atom(env, "copy_strings");
     st->atom_undefined = make_atom(env, "undefined");
+    st->atom_utf8_invalid_char_as_is = make_atom(env, "utf8_invalid_char_as_is");
 
     // Markers used in encoding
     st->ref_object = make_atom(env, "$object_ref$");
