@@ -46,6 +46,7 @@ typedef struct {
     ERL_NIF_TERM    atom_copy_strings;
     ERL_NIF_TERM    atom_undefined;
     ERL_NIF_TERM    atom_utf8_invalid_char_as_is;
+    ERL_NIF_TERM    atom_trim_trailing_zeros_in_doubles;
 
     ERL_NIF_TERM    ref_object;
     ERL_NIF_TERM    ref_array;
@@ -85,6 +86,6 @@ int utf8_to_unicode(unsigned char* buf, size_t size);
 int unicode_to_utf8(int c, unsigned char* buf);
 int unicode_from_pair(int hi, int lo);
 int unicode_uescape(int c, unsigned char* buf);
-int double_to_shortest(unsigned char *buf, size_t size, size_t* len, double val);
+int double_to_shortest(unsigned char *buf, size_t size, size_t* len, double val, int trim_zeros);
 
 #endif // Included JIFFY_H

@@ -10,12 +10,14 @@ namespace dc = double_conversion;
 BEGIN_C
 
 int
-double_to_shortest(unsigned char* buf, size_t size, size_t* len, double val)
+double_to_shortest(unsigned char* buf, size_t size, size_t* len, double val, int trim_zeros)
 {
     int flags = dc::DoubleToStringConverter::UNIQUE_ZERO |
-                dc::DoubleToStringConverter::EMIT_POSITIVE_EXPONENT_SIGN |
-                dc::DoubleToStringConverter::EMIT_TRAILING_DECIMAL_POINT |
-                dc::DoubleToStringConverter::EMIT_TRAILING_ZERO_AFTER_POINT;
+                dc::DoubleToStringConverter::EMIT_POSITIVE_EXPONENT_SIGN;
+    if(trim_zeros == 0) {
+        flags |= dc::DoubleToStringConverter::EMIT_TRAILING_DECIMAL_POINT |
+                 dc::DoubleToStringConverter::EMIT_TRAILING_ZERO_AFTER_POINT;
+    }
 
     dc::StringBuilder builder(reinterpret_cast<char*>(buf), size);
     dc::DoubleToStringConverter conv(flags, NULL, NULL, 'e', -6, 21, 6, 0);

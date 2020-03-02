@@ -35,6 +35,7 @@ typedef struct {
     int             pretty;
     int             use_nil;
     int             escape_forward_slashes;
+    int             trim_trailing_zeros_in_doubles;
 
     int             shiftcnt;
     int             count;
@@ -78,6 +79,7 @@ enc_new(ErlNifEnv* env)
     e->pretty = 0;
     e->use_nil = 0;
     e->escape_forward_slashes = 0;
+    e->trim_trailing_zeros_in_doubles = 0;
     e->shiftcnt = 0;
     e->count = 0;
 
@@ -500,7 +502,7 @@ enc_double(Encoder* e, double val)
 
     start = &(e->p[e->i]);
 
-    if(!double_to_shortest(start, e->buffer.size, &len, val)) {
+    if(!double_to_shortest(start, e->buffer.size, &len, val, e->trim_trailing_zeros_in_doubles)) {
         return 0;
     }
 
@@ -683,6 +685,8 @@ encode_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
             continue;
         } else if(get_bytes_per_red(env, val, &(e->bytes_per_red))) {
             continue;
+        } else if(enif_is_identical(val, e->atoms->atom_trim_trailing_zeros_in_doubles)) {
+            e->trim_trailing_zeros_in_doubles = 1;
         } else {
             return enif_make_badarg(env);
         }
