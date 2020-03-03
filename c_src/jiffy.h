@@ -47,6 +47,7 @@ typedef struct {
     ERL_NIF_TERM    atom_undefined;
     ERL_NIF_TERM    atom_utf8_invalid_char_as_is;
     ERL_NIF_TERM    atom_trim_trailing_zeros_in_doubles;
+    ERL_NIF_TERM    atom_error_on_undefined;
 
     ERL_NIF_TERM    ref_object;
     ERL_NIF_TERM    ref_array;

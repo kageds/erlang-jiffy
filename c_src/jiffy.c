@@ -38,6 +38,7 @@ load(ErlNifEnv* env, void** priv, ERL_NIF_TERM info)
     st->atom_undefined = make_atom(env, "undefined");
     st->atom_utf8_invalid_char_as_is = make_atom(env, "utf8_invalid_char_as_is");
     st->atom_trim_trailing_zeros_in_doubles = make_atom(env, "trim_trailing_zeros_in_doubles");
+    st->atom_error_on_undefined = make_atom(env, "error_on_undefined");
 
     // Markers used in encoding
     st->ref_object = make_atom(env, "$object_ref$");

@@ -36,6 +36,7 @@ typedef struct {
     int             use_nil;
     int             escape_forward_slashes;
     int             trim_trailing_zeros_in_doubles;
+    int             error_on_undefined;
 
     int             shiftcnt;
     int             count;
@@ -80,6 +81,7 @@ enc_new(ErlNifEnv* env)
     e->use_nil = 0;
     e->escape_forward_slashes = 0;
     e->trim_trailing_zeros_in_doubles = 0;
+    e->error_on_undefined = 0;
     e->shiftcnt = 0;
     e->count = 0;
 
@@ -687,6 +689,8 @@ encode_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
             continue;
         } else if(enif_is_identical(val, e->atoms->atom_trim_trailing_zeros_in_doubles)) {
             e->trim_trailing_zeros_in_doubles = 1;
+        } else if(enif_is_identical(val, e->atoms->atom_error_on_undefined)) {
+            e->error_on_undefined = 1;
         } else {
             return enif_make_badarg(env);
         }
@@ -842,13 +846,13 @@ encode_iter(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
                     ret = enc_error(e, "false");
                     goto done;
                 }
+            } else if(enif_compare(curr, e->atoms->atom_undefined) == 0 && e->error_on_undefined == 1) {
+                ret = enc_obj_error(e, "invalid_ejson", curr);
+                goto done;
             } else if(!enc_atom(e, curr)) {
                 ret = enc_obj_error(e, "invalid_string", curr);
                 goto done;
             }
-        } else if(enif_compare(curr, e->atoms->atom_undefined) == 0) {
-            ret = enc_obj_error(e, "invalid_ejson", curr);
-            goto done;
         } else if(enif_is_binary(env, curr)) {
             if(!enc_string(e, curr)) {
                 ret = enc_obj_error(e, "invalid_string", curr);
