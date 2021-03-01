@@ -34,6 +34,7 @@ load(ErlNifEnv* env, void** priv, ERL_NIF_TERM info)
     st->atom_null_term = make_atom(env, "null_term");
     st->atom_escape_forward_slashes = make_atom(env, "escape_forward_slashes");
     st->atom_dedupe_keys = make_atom(env, "dedupe_keys");
+    st->atom_error_on_duplicate_key = make_atom(env, "error_on_duplicate_key");
     st->atom_copy_strings = make_atom(env, "copy_strings");
     st->atom_undefined = make_atom(env, "undefined");
     st->atom_utf8_invalid_char_as_is = make_atom(env, "utf8_invalid_char_as_is");

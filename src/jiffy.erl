@@ -40,6 +40,7 @@
                         | use_nil
                         | return_trailer
                         | dedupe_keys
+                        | error_on_duplicate_key
                         | copy_strings
                         | utf8_invalid_char_as_is
                         | {null_term, any()}

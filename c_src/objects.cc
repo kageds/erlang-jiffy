@@ -19,7 +19,7 @@ BEGIN_C
 
 int
 make_object(ErlNifEnv* env, ERL_NIF_TERM pairs, ERL_NIF_TERM* out,
-	int ret_map, int dedupe_keys)
+	int ret_map, int dedupe_keys, int error_on_duplicate_key)
 {
     ERL_NIF_TERM ret;
     ERL_NIF_TERM key;
@@ -41,6 +41,8 @@ make_object(ErlNifEnv* env, ERL_NIF_TERM pairs, ERL_NIF_TERM* out,
                 if(!enif_make_map_put(env, ret, key, val, &ret)) {
                     return 0;
                 }
+            } else if (error_on_duplicate_key) {
+                return -1;
             }
         }
         *out = ret;
@@ -53,7 +55,7 @@ make_object(ErlNifEnv* env, ERL_NIF_TERM pairs, ERL_NIF_TERM* out,
         if(!enif_get_list_cell(env, pairs, &key, &pairs)) {
             assert(0 == 1 && "Unbalanced object pairs.");
         }
-        if(dedupe_keys) {
+        if(dedupe_keys || error_on_duplicate_key) {
             ErlNifBinary bin;
             if(!enif_inspect_binary(env, key, &bin)) {
                 return 0;
@@ -63,6 +65,8 @@ make_object(ErlNifEnv* env, ERL_NIF_TERM pairs, ERL_NIF_TERM* out,
                 seen.insert(skey);
                 val = enif_make_tuple2(env, key, val);
                 ret = enif_make_list_cell(env, val, ret);
+            } else if (error_on_duplicate_key) {
+                return -1;
             }
         } else {
             val = enif_make_tuple2(env, key, val);
